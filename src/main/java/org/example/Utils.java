@@ -1,5 +1,11 @@
 package org.example;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -71,4 +77,91 @@ public class Utils {
         }
         return inputFiles;
     }
+
+    static List<String> readFromInput(List<String> inputFiles) {
+        List<String> fileContents = new ArrayList<>();
+        for (String arg : inputFiles) {
+            try {
+                // Read all lines from the file and add them to the list
+                List<String> lines = Files.readAllLines(Paths.get(arg));
+                fileContents.addAll(lines); // Merge lines from different files
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return fileContents;
+    }
+
+    public static void writeListToFile(List<String> list, String outputDir, String prefix, String fileName,
+                                       boolean isAppendMode) {
+        if (list.isEmpty()) {
+            return;         // Не сохраняем пустой лист
+        }
+        // Проверяем, указан ли outputDir
+        boolean useCurrentDir = outputDir == null || outputDir.trim().isEmpty();
+        String fullFileName;
+        if (!useCurrentDir) {
+            // Создаём директорию, если она не пустая и не существует
+            File directory = new File(outputDir);
+            if (!directory.exists()) {
+                if (directory.mkdirs()) {
+                    System.out.println("Директория создана: " + outputDir);
+                } else {
+                    System.err.println("Ошибка при создании директории: " + outputDir);
+                    return;
+                }
+            }
+            // Формируем полный путь к файлу
+            fullFileName = Paths.get(outputDir, prefix + fileName).toString();
+        } else {
+            // Если outputDir пустой, создаем файл в текущей директории
+            fullFileName = prefix + fileName;
+        }
+
+        // Открываем файл в режиме записи (учитываем appendMode)
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fullFileName, isAppendMode))) {
+            for (String line : list) {
+                writer.write(line);
+                writer.newLine();
+            }
+            System.out.println("Файл сохранен: " + fullFileName);
+        } catch (IOException e) {
+            System.err.println("Ошибка при записи файла: " + fullFileName);
+            e.printStackTrace();
+        }
+    }
+
+    static boolean isFloat(String currentString) {
+        try {
+            Double.parseDouble(currentString);
+            return true;
+        } catch (NumberFormatException exception) {
+            return false;
+        }
+    }
+
+    static boolean isInteger(String currentString) {
+        if (currentString.isEmpty()) {
+            return false; // Handle null or empty case
+        }
+        for (char c : currentString.toCharArray()) {
+            if (!Character.isDigit(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static void sort(List<String> fileContents, List<String> integers, List<String> floats, List<String> strings) {
+        for (String line : fileContents) {
+            if (isInteger(line)) {
+                integers.add(line);
+            } else if (isFloat(line)) {
+                floats.add(line);
+            } else {
+                strings.add(line);
+            }
+        }
+    }
+
 }

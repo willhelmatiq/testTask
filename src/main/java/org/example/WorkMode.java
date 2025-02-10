@@ -15,11 +15,11 @@ public class WorkMode {
         this.fullStatistic = fullStatistic;
     }
 
-    public String isOutputPath() {
+    public String getOutputPath() {
         return outputPath;
     }
 
-    public String isPrefix() {
+    public String getPrefix() {
         return prefix;
     }
 

@@ -3,47 +3,27 @@ package org.example;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.example.Statistic.*;
+import static org.example.Utils.sort;
+import static org.example.Utils.writeListToFile;
+
 public class StringHandler {
 
     static void processStrings(List<String> fileContents, WorkMode workMode) {
         List<String> integers = new ArrayList<>();
         List<String> floats = new ArrayList<>();
         List<String> strings = new ArrayList<>();
-
         sort(fileContents, integers, floats, strings);
 
+        collectAndPrintStatistic(workMode, integers, floats, strings);
 
-    }
-    static boolean isFloat(String currentString) {
-        try {
-            Double.parseDouble(currentString);
-            return true;
-        } catch (NumberFormatException exception) {
-            return false;
-        }
-    }
+        writeListToFile(integers, workMode.getOutputPath(), workMode.getPrefix(),
+                OutputFileTypes.INTEGER.getFileName(), workMode.isAppendMode());
+        writeListToFile(floats, workMode.getOutputPath(), workMode.getPrefix(),
+                OutputFileTypes.FLOAT.getFileName(), workMode.isAppendMode());
+        writeListToFile(strings, workMode.getOutputPath(), workMode.getPrefix(),
+                OutputFileTypes.STRING.getFileName(), workMode.isAppendMode());
 
-    static boolean isInteger(String currentString) {
-        if (currentString.isEmpty()) {
-            return false; // Handle null or empty case
-        }
-        for (char c : currentString.toCharArray()) {
-            if (!Character.isDigit(c)) {
-                return false;
-            }
-        }
-        return true;
-    }
 
-    static void sort(List<String> fileContents, List<String> integers, List<String> floats, List<String> strings) {
-        for (String line : fileContents) {
-            if (isInteger(line)) {
-                integers.add(line);
-            } else if (isFloat(line)) {
-                floats.add(line);
-            } else {
-                strings.add(line);
-            }
-        }
     }
 }

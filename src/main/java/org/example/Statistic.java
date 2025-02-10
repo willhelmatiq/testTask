@@ -6,7 +6,7 @@ import java.math.RoundingMode;
 import java.util.List;
 
 public class Statistic {
-    static String getSortStat(List<String> stringList) {
+    static String getShortStat(List<String> stringList) {
         return "количество элементов: " + stringList.size();
     }
     static String getIntegerFullStat(List<String> integers) {
@@ -28,7 +28,7 @@ public class Statistic {
         BigDecimal avgVal = new BigDecimal(sum)
                 .divide(new BigDecimal(integers.size()), 10, RoundingMode.HALF_UP);
 
-        return getSortStat(integers) + "\n" +
+        return getShortStat(integers) + "\n" +
                 "минимум: " + minInt + "\n" +
                 "максимум: " + maxInt + "\n" +
                 "сумма: " + sum + "\n" +
@@ -52,7 +52,7 @@ public class Statistic {
             sum += num;
         }
         avgVal = sum / floats.size();
-        return getSortStat(floats) + "\n" +
+        return getShortStat(floats) + "\n" +
                 "минимум: " + minFloat + "\n" +
                 "максимум: " + maxFloat + "\n" +
                 "сумма: " + sum + "\n" +
@@ -70,8 +70,44 @@ public class Statistic {
                 maxStr = str;
             }
         }
-        return getSortStat(strings) + "\n" +
+        return getShortStat(strings) + "\n" +
                 "размер самой короткой строки: " + minStr.length() + "\n" +
                 "размер самой длинной строки: " + maxStr.length();
+    }
+
+    static void collectAndPrintStatistic(WorkMode workMode, List<String> integers,
+                                         List<String> floats, List<String> strings ) {
+        String IntegerFileNameWithPrefix = workMode.getPrefix() + OutputFileTypes.INTEGER;
+        String FloatFileNameWithPrefix = workMode.getPrefix() + OutputFileTypes.FLOAT;
+        String StringFileNameWithPrefix = workMode.getPrefix() + OutputFileTypes.STRING;
+
+        if (workMode.isStatistic()) {
+            if (!integers.isEmpty()) {
+                System.out.println("Краткая статистика для " + IntegerFileNameWithPrefix);
+                System.out.println(getShortStat(integers));
+            }
+            if (!floats.isEmpty()) {
+                System.out.println("Краткая статистика для " + FloatFileNameWithPrefix);
+                System.out.println(getShortStat(floats));
+            }
+            if (!strings.isEmpty()) {
+                System.out.println("Краткая статистика для " + StringFileNameWithPrefix);
+                System.out.println(getShortStat(strings));
+            }
+        }
+        if (workMode.isFullStatistic()) {
+            if (!integers.isEmpty()) {
+                System.out.println("Полная статистика для " + IntegerFileNameWithPrefix);
+                System.out.println(getIntegerFullStat(integers));
+            }
+            if (!floats.isEmpty()) {
+                System.out.println("Полная статистика для " + FloatFileNameWithPrefix);
+                System.out.println(getFloatFullStat(floats));
+            }
+            if (!strings.isEmpty()) {
+                System.out.println("Полная статистика для " + StringFileNameWithPrefix);
+                System.out.println(getStringFullStat(strings));
+            }
+        }
     }
 }
